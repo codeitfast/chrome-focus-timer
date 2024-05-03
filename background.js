@@ -13,7 +13,9 @@ function updateViewCount(tabId) {
     chrome.tabs.get(tabId, (tab) => {
       if (!tab.url) return;
       const url = new URL(tab.url).hostname;
-      const date = new Date().toISOString().slice(0, 10); // Current date YYYY-MM-DD
+      let date = new Date()
+      //hopefully local time works...check tomorrow...
+      date = date.toLocaleString().slice(0, 10); // Current date YYYY-MM-DD
       const key = `${date}:${url}`;
 
       chrome.storage.local.get([key], (result) => {
