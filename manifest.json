@@ -8,6 +8,12 @@
     },
     "action": {
       "default_popup": "popup.html"
+    },
+    "icons": {
+      "16": "dallE.png",
+      "32": "dallE.png",
+      "64": "dallE.png",
+      "128": "dallE.png"
     }
   }
   
