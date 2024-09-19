@@ -1,43 +1,22 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Tab Views</title>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'" />
+    <meta http-equiv="Content-Security-Policy" content="img-src https://*; child-src 'none'; script-src 'self';" />
+    <link rel="stylesheet" type="text/css" href="global.css" />
 
-    <!-- Include TailwindCSS from CDN -->
-    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
-    <script src="popup.js"></script>
-    <style>
-        body {
-            width: 400px;
-            /* Set width */
-            height: 600px;
-            /* Set height */
-        }
-        .bar:hover{
-            scale: 110%;
-            transition: all .1s ease-out;
-        }
-        .bar{
-            cursor: pointer;
-            transition: all .1s ease-out;
-        }
-    </style>
 </head>
 
 <body class="bg-gray-100 p-4 rounded-lg">
-    <div id="totalUsage" style="outline: 1px solid rgba(0,0,0,.1); padding: 16px; border-radius: 16px; top: 8px; background: rgba(255,255,255,.9); backdrop-filter: blur(10px);">
-    <div id="viewTotal" class="flex w-full"
-        style="justify-content: space-between;
-        display: flex; align-items: flex-end; 
-         position: relative;">
-         </div>
+    <div style="padding: 8px; text-align: center;">
+    Help us improve: <a href="https://forms.gle/rnpTXRFEtQ9Xt7dk7" target="_blank">forms.gle</a>
     </div>
-    <div id="viewCounts" class="overflow-auto bg-white p-4 rounded shadow">
+    <div id="clean">
+
     </div>
-    </script>
+    <script type="text/javascript" src="popup.js"></script>
+
 </body>
 
 </html>
