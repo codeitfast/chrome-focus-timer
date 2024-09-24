@@ -17,24 +17,29 @@ function getStorage(items) {
 
   // Group entries by date
   entries.forEach(([key, value]) => {
-    let date = key.split(":")[0];
-    if (!groupedByDate[date]) {
-      groupedByDate[date] = [];
+    if (key != "categories") {
+      let date = key.split(":")[0];
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = [];
+      }
+      groupedByDate[date].push({ key, value });
     }
-    groupedByDate[date].push({ key, value });
   });
 
   return { entries, groupedByDate };
 }
 
 function App() {
+  const [result, setResult] = useState("");
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState({})
   const [storage, setStorage] = useState({
     entries: [],
     groupedByDate: {},
   });
   const [dates, setDates] = useState([]);
   chrome.storage.local.get(null, (items) => {
+    setResult(items);
     setItems(items);
   });
 
@@ -70,6 +75,9 @@ function App() {
     });
 
     setStorage(formed_s);
+
+    setCategories(items.categories)
+
   }, [items]);
 
   return (
@@ -77,11 +85,24 @@ function App() {
       <div>
         <TopChart storage={storage} />
         <div className="">
-          {/* JSON.stringify(storage) */}
+          {/* JSON.stringify(items.categories) */}
+
+          {/*items &&
+          <button onClick={()=>{
+            let n = {...items.categories}
+            n.blogging.urls.push(Math.random())
+            chrome.storage.local.set({ categories: n }, () => {
+              if (chrome.runtime.lastError) {
+                console.error('Error saving categories:', chrome.runtime.lastError);
+              } else {
+                setCategories(n);
+              }
+            });        
+          }}>CLICK</button>
+          */}
+
           {storage &&
-            dates.map((date) => (
-              <Day storage={storage} date={date} />
-            ))}
+            dates.map((date) => <Day categories={categories} storage={storage} date={date} />)}
         </div>
       </div>
     </>

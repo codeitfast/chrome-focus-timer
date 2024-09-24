@@ -13,3 +13,8 @@ export const convert_to_hours_rounded = (ticks) => {
 export const convert_to_minutes_rounded = (ticks) => {
     return Math.floor(convert_to_minutes(ticks))
 }
+
+export const days_ago = (old_date) => {
+    let today = new Date()
+    return Math.floor((today - old_date) / 1000 / 60 / 60 / 24) 
+}
