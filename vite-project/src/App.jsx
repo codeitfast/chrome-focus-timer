@@ -1,23 +1,32 @@
 import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import AppStats from "../components/app_stats";
 import TopChart from "../components/top_chart";
-import {
-  convert_to_hours_rounded,
-  convert_to_minutes_rounded,
-} from "./lib/convert_tick";
-
 import Day from "../components/day";
+import { shortened_url } from "./lib/shorten_url";
+import { IoCloseOutline } from "react-icons/io5";
+import { organize_data } from "./lib/organize_data";
+import { Fa0, FaCheck, FaTimeline, FaXmark } from "react-icons/fa6";
 
 function getStorage(items) {
+  let groupedByDate = [];
+  const transformed_data = organize_data(items, "day");
+
+  // !!!
+  // in the future this will sort data, label data, etc
+  transformed_data.stats.map((e, i) => {
+    groupedByDate.push(e); // STOPPED HERE
+  });
+
+  return { transformed_data, groupedByDate };
+
+  /*
+
   const entries = Object.entries(items);
   let groupedByDate = {};
 
   // Group entries by date
   entries.forEach(([key, value]) => {
-    if (key != "categories") {
+    if (key != "categories" && key != 'site-stats') {
       let date = key.split(":")[0];
       if (!groupedByDate[date]) {
         groupedByDate[date] = [];
@@ -27,24 +36,45 @@ function getStorage(items) {
   });
 
   return { entries, groupedByDate };
+  */
 }
 
 function App() {
-  const [result, setResult] = useState("");
+  const [focused_urls, set_focused_urls] = useState([]);
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState({})
-  const [storage, setStorage] = useState({
-    entries: [],
-    groupedByDate: {},
-  });
+  const [categories, setCategories] = useState({});
+  const [storage, setStorage] = useState([]);
   const [dates, setDates] = useState([]);
-  chrome.storage.local.get(null, (items) => {
-    setResult(items);
+  chrome.storage.local.get("site-stats", (items) => {
     setItems(items);
   });
+  chrome.storage.local.get("categories", (categories) => {
+    setCategories(categories.categories);
+  });
+
+  // tooltip code
+
+  const [closed, set_closed] = useState(true);
 
   useEffect(() => {
-    let s = getStorage(items);
+    chrome.storage.local.get("tooltip", (item) => {
+      set_closed(!item.tooltip);
+    });
+  }, []);
+
+  const close = () => {
+    set_closed(true);
+    chrome.storage.local.set({ tooltip: false });
+  };
+
+  //
+
+  useEffect(() => {
+    if (items == undefined || items == null || items == "") return;
+    let { transformed_data, groupedByDate } = getStorage(items);
+    setStorage(groupedByDate);
+
+    /*
 
     // dates, unordered
     let d = Object.keys(s.groupedByDate);
@@ -76,36 +106,115 @@ function App() {
 
     setStorage(formed_s);
 
-    setCategories(items.categories)
-
+    setCategories(items.categories);
+    */
   }, [items]);
 
+  const [back_weeks, set_back_weeks] = useState(0);
+  const [calendar_view, set_calendar_view] = useState(false);
+
+  const now = new Date()
+
   return (
-    <>
-      <div>
-        <TopChart storage={storage} />
-        <div className="">
-          {/* JSON.stringify(items.categories) */}
+    <div>
+      {/* topchart will be able to take categories to add on top of the chart. */}
+      {/* added category can be:
 
-          {/*items &&
-          <button onClick={()=>{
-            let n = {...items.categories}
-            n.blogging.urls.push(Math.random())
-            chrome.storage.local.set({ categories: n }, () => {
-              if (chrome.runtime.lastError) {
-                console.error('Error saving categories:', chrome.runtime.lastError);
-              } else {
-                setCategories(n);
-              }
-            });        
-          }}>CLICK</button>
-          */}
+        {type: "url", URL-HERE}
+        {type: "category"} <-- add this later, I don't know how the UI will look
+        
+        */}
+      {/*
 
-          {storage &&
-            dates.map((date) => <Day categories={categories} storage={storage} date={date} />)}
-        </div>
+      <div
+        className={`transition-all fixed top-0 left-0 w-full p-1 bg-gray-200/75 backdrop-blur-lg z-50 flex flex-wrap ${
+          focused_urls.length == 0 ? "-translate-y-10" : "translate-y-0"
+        }`}
+      >
+        {focused_urls.map((e, id) => (
+          <div className="bg-gray-400 text-xs text-black p-1 px-2 m-1 rounded-2xl w-fit flex">
+            {shortened_url({ key: e })}{" "}
+            <IoCloseOutline
+              className="my-auto ml-2"
+              onClick={() => {
+                let old_focus = [...focused_urls];
+                old_focus.splice(id, 1);
+                set_focused_urls(old_focus);
+              }}
+            />
+          </div>
+        ))}
       </div>
-    </>
+      */}
+
+      {!closed && (
+        <div className="relative -mt-2 mb-2">
+          <div
+            className="absolute -top-2 -left-2 p-1 text-xs rounded-full bg-gray-200/50 hover:bg-gray-200 shadow-sm backdrop-blur-sm text-gray-500 cursor-pointer"
+            onClick={() => {
+              close();
+            }}
+          >
+            <FaXmark />
+          </div>
+          <a href="https://forms.gle/rnpTXRFEtQ9Xt7dk7" target="_blank">
+            <div className="p-2 text-center bg-gray-200/50 rounded-2xl text-gray-500">
+              Help us improve:{" "}
+              <a
+                href="https://forms.gle/rnpTXRFEtQ9Xt7dk7"
+                className="text-black hover:underline"
+                target="_blank"
+              >
+                forms.gle
+              </a>
+            </div>
+          </a>
+        </div>
+      )}
+
+      <TopChart
+        storage={storage}
+        filter={focused_urls}
+        back_weeks={back_weeks}
+        set_back_weeks={set_back_weeks}
+        calendar_view={calendar_view}
+        set_calendar_view={set_calendar_view}
+        items={items}
+      />
+
+      <div className="">
+        {storage &&
+          storage.map((date, i) => (
+            <div>{(calendar_view ||
+              !(i - 7 * back_weeks >= 7 || i - 7 * back_weeks < 0)) &&
+            <Day
+              set_focused_urls={set_focused_urls}
+              focused_urls={focused_urls}
+              categories={categories}
+              storage={storage}
+              date={date}
+              day={i}
+            />
+            }</div>
+          ))}
+      </div>
+      {closed && (
+        <div className="relative">
+          <a href="https://forms.gle/rnpTXRFEtQ9Xt7dk7" target="_blank">
+            <div className="p-2 text-center bg-gray-200/50 rounded-2xl text-gray-500">
+              Help us improve:{" "}
+              <a
+                href="https://forms.gle/rnpTXRFEtQ9Xt7dk7"
+                className="text-black hover:underline"
+                target="_blank"
+              >
+                forms.gle
+              </a>
+            </div>
+          </a>
+        </div>
+      )}
+    </div>
   );
 }
 

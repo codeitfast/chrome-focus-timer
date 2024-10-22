@@ -602,7 +602,6 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
 
     function onDotClick(itemData: any, event: React.MouseEvent) {
       event.stopPropagation()
-
       if (!hasOnValueChange) return
       if (
         (itemData.index === activeDot?.index &&
@@ -624,6 +623,7 @@ const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
           eventType: "dot",
           categoryClicked: itemData.dataKey,
           ...itemData.payload,
+          index: itemData.index
         })
       }
     }
