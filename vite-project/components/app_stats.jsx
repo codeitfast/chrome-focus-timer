@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ProgressBar } from "./ProgressBar";
 import {
@@ -25,6 +25,8 @@ import {
 
 import { MdWorkOutline } from "react-icons/md";
 import { HiOutlineEmojiHappy } from "react-icons/hi";
+
+import { useClickOutside } from "../src/lib/outside_click";
 
 /*
 import {
@@ -66,16 +68,7 @@ export default function AppStats({
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
-    let total_url = stats.website;
-    let s = total_url.split(".");
-    let s_end_index = s.length - 1;
-    if (s.length > 2) {
-      setCategory(
-        findCategory(categories, [s[s_end_index - 1], s[s_end_index]].join("."))
-      );
-    } else {
-      setCategory(findCategory(categories, total_url));
-    }
+    setCategory(findCategory(categories, shortened_url(stats.website)));
   }, [categories]);
 
   const handleImageLoad = () => {
@@ -89,17 +82,20 @@ export default function AppStats({
   const category_bg = {
     work: "bg-slate-200/50",
     fun: "bg-blue-200/50",
+    other: "bg-gray-200/50",
   };
 
   // tricks tailwind into keeping these colors
   const asdf = {
     work: "hover:bg-slate-200/50",
     fun: "hover:bg-blue-200/50",
+    other: "hover:bg-gray-200/50",
   };
 
   const category_text = {
     work: "text-slate-500",
     fun: "text-blue-500",
+    other: "text-gray-500",
   };
 
   const category_icon = {
@@ -117,6 +113,11 @@ export default function AppStats({
     work: <MdWorkOutline />,
     fun: <HiOutlineEmojiHappy />,
   };
+
+  const ref = useRef(null);
+  useClickOutside(ref, () => {
+    setFocused(false);
+  });
 
   return (
     <div
@@ -164,8 +165,11 @@ export default function AppStats({
 
           <div className="my-auto">{category}</div>
         </div>
-        {focused == true &&
-        <div className="absolute right-2 top-8 p-4 rounded-2xl bg-white shadow-sm">
+        {focused == true && (
+          <div
+            ref={ref}
+            className="absolute right-2 top-8 p-4 rounded-2xl bg-white shadow-sm z-50 grid grid-cols-1 gap-4"
+          >
             {Object.keys(categories).map((name) => (
               <div
                 className={`${
@@ -180,22 +184,19 @@ export default function AppStats({
                     : "outline-gray-200/50"
                 } rounded-full ${
                   category_text[name] ? category_text[name] : "text-gray-500"
-                } backdrop-blur-sm px-4 py-2 flex m-2 text-base cursor-pointer w-fit`}
+                } backdrop-blur-sm px-2 py-1 text-xs flex cursor-pointer w-fit`}
                 onClick={(e) => {
                   e.stopPropagation();
-
                   // take url from one category and move it to another
                   let n = { ...categories };
 
-                  n[name].urls.push(shortened_url(stats.website)); // push url to social
+                  n[name].urls.push(shortened_url(stats.website));
 
-                  if (category != undefined && category != "other") {
-                    // get index in old array
-                    let old_index = n[category].urls.indexOf(
-                      shortened_url(stats)
-                    );
-                    n[category].urls.splice(old_index, 1);
-                  }
+                  // get index in old array
+                  let old_index = n[category].urls.indexOf(
+                    shortened_url(stats.website)
+                  );
+                  if (old_index != -1) n[category].urls.splice(old_index, 1);
 
                   chrome.storage.local.set({ categories: n }, () => {
                     if (chrome.runtime.lastError) {
@@ -205,6 +206,7 @@ export default function AppStats({
                       );
                     }
                   });
+                  setFocused(false);
                 }}
               >
                 <div className="my-auto mr-2 cursor-pointer">
@@ -219,7 +221,7 @@ export default function AppStats({
               </div>
             ))}
           </div>
-        }
+        )}
         <a
           target={"_blank"}
           href={`https://${stats.website}`}

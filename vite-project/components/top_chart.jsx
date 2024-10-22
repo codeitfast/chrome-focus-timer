@@ -191,7 +191,7 @@ const TopChart = ({
           index="date"
           categories={[
             "screen time",
-            ...filter.map((e) => shortened_url({ key: e })),
+            ...filter.map((e) => shortened_url(e)),
           ]}
           valueFormatter={(tick) =>
             `${ticks_to_hours_rounded(tick)}h ${ticks_to_minutes_rounded(
@@ -207,7 +207,7 @@ const TopChart = ({
           onValueChange={(v) => setValue(v)}
           categories={[
             "screen time",
-            ...filter.map((e) => shortened_url({ key: e })),
+            ...filter.map((e) => shortened_url(e)),
           ]}
           valueFormatter={(tick) =>
             `${ticks_to_hours_rounded(tick)}h ${ticks_to_minutes_rounded(

@@ -257,9 +257,7 @@ const ioGames = [
   "zombsroyale.io"
 ];
 
-//chrome.storage.local.set({ "site-stats": {} });
-
-chrome.storage.local.get("categories", (categories) => {
+const reset_categories = () => {
   chrome.storage.local.set({
     // todo: make categories updateable
     categories: {
@@ -317,9 +315,22 @@ chrome.storage.local.get("categories", (categories) => {
           ...ioGames
         ],
       },
-      // eventually add "OTHER" category or allow them to make categories
+      other: {
+        icon: "SVG",
+        background: "COLOR",
+        text: "COLOR",
+        urls: []
+      } // starts out empty
     },
   });
+}
+
+reset_categories()
+
+chrome.storage.local.get("categories", (categories) => {
+  if(categories == undefined){
+    reset_categories()
+  }
 });
 
 chrome.storage.local.set({ tooltip: true });

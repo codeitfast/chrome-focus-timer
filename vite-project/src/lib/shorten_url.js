@@ -8,6 +8,6 @@ export const shortened_url = (u) => {
     }
     return s.join(".");
   } catch (err) {
-    console.error(JSON.stringify(u));
+    console.error(`ERR: U = ${u}`)
   }
 };
