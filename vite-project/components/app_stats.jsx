@@ -162,9 +162,12 @@ export default function AppStats({
             )}
           </div>
 
-          <select>
+          <div className="my-auto">{category}</div>
+        </div>
+        {focused == true &&
+        <div className="absolute right-2 top-8 p-4 rounded-2xl bg-white shadow-sm">
             {Object.keys(categories).map((name) => (
-              <option
+              <div
                 className={`${
                   name == category
                     ? category_bg[name]
@@ -213,12 +216,10 @@ export default function AppStats({
                 </div>
 
                 <div className="my-auto">{name}</div>
-              </option>
+              </div>
             ))}
-          </select>
-
-          <div className="my-auto">{category}</div>
-        </div>
+          </div>
+        }
         <a
           target={"_blank"}
           href={`https://${stats.website}`}
