@@ -254,7 +254,7 @@ const ioGames = [
   "zlax.io",
   "zombiecraft.io",
   "zombs.io",
-  "zombsroyale.io",
+  "zombsroyale.io"
 ];
 
 const reset_categories = () => {
@@ -275,19 +275,19 @@ const reset_categories = () => {
           "claude.ai",
           "baidu.com",
           "bing.com",
-          "linkedin.com",
-          "live.com",
-          "office.com",
-          "microsoft.com",
-          "mail.ru",
-          "samsung.com",
-          "sharepoint.com",
-          "duckduckgo.com",
-          "zoom.us",
-          "amazon.com",
-          "t.me",
-          "canva.com",
-          "extensions",
+          'linkedin.com',
+          'live.com',
+          'office.com',
+          'microsoft.com',
+          'mail.ru',
+          'samsung.com',
+          'sharepoint.com',
+          'duckduckgo.com',
+          'zoom.us',
+          'amazon.com',
+          't.me',
+          'canva.com',
+          'extensions',
         ],
       },
       fun: {
@@ -295,41 +295,41 @@ const reset_categories = () => {
         background: "COLOR",
         text: "COLOR",
         urls: [
-          "youtube.com",
-          "facebook.com",
-          "instagram.com",
-          "x.com",
-          "reddit.com",
-          "tiktok.com",
-          "netflix.com",
-          "pornhub.com",
-          "dzen.ru",
-          "naver.com",
-          "xvideos.com",
-          "twitch.tv",
-          "fandom.com",
-          "quora.com",
-          "twitter.com",
-          "kwai-video.com",
-          "open.spotify.com",
-          ...ioGames,
+          'youtube.com',
+          'facebook.com',
+          'instagram.com',
+          'x.com',
+          'reddit.com',
+          'tiktok.com',
+          'netflix.com',
+          'pornhub.com',
+          'dzen.ru',
+          'naver.com',
+          'xvideos.com',
+          'twitch.tv',
+          'fandom.com',
+          'quora.com',
+          'twitter.com',
+          'kwai-video.com',
+          'open.spotify.com',
+          ...ioGames
         ],
       },
       other: {
         icon: "SVG",
         background: "COLOR",
         text: "COLOR",
-        urls: [],
-      }, // starts out empty
+        urls: []
+      } // starts out empty
     },
   });
-};
+}
 
-reset_categories();
+//reset_categories()
 
 chrome.storage.local.get("categories", (categories) => {
-  if (categories == undefined) {
-    reset_categories();
+  if(categories == undefined){
+    reset_categories()
   }
 });
 
@@ -369,22 +369,16 @@ const getCurrentTab = async () => {
 
 const getCurrentData = async () => {
   let data = await chrome.storage.local.get("site-stats");
-  if (data == undefined || data == null || Object.keys(data).length === 0)
-    return (
-      {
-        "site-stats": {},
-      }
-    );
-
   return data;
 };
 
 const update_timestamps = async (tab) => {
   let t = await chrome.tabs.get(tab.id);
-  let url = new URL(t.url).hostname;
 
   // domain of URL
   try {
+    url = new URL(t.url).hostname;
+
     // structure as seen above
     let current_data = await getCurrentData();
     current_data = current_data["site-stats"];
@@ -429,6 +423,34 @@ setInterval(() => {
   if (COMPUTER_ON) update();
 }, 1000 * WAIT);
 
+/*
+setInterval(() => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0]) {
+      updateViewCount(tabs[0].id);
+    }
+  });
+}, 10000); // Check every 10 seconds
+
+function updateViewCount(tabId) {
+  if (tabId) {
+    chrome.tabs.get(tabId, (tab) => {
+      if (!tab.url) return;
+
+      const url = new URL(tab.url).hostname;
+      let old_date = new Date();
+      let date = old_date.toLocaleString().slice(0, 10); // Current date YYYY-MM-DD
+      const key = `${date}:${url}`;
+
+      chrome.storage.local.get([key], (result) => {
+        let currentCount = result[key] ? result[key] : 0;
+        chrome.storage.local.set({ [key]: currentCount + 1 });
+      });
+    });
+  }
+}
+*/
+
 chrome.windows.onFocusChanged.addListener((windowId) => {
   if (windowId === chrome.windows.WINDOW_ID_NONE) {
     // Chrome window has lost focus
@@ -442,7 +464,7 @@ chrome.windows.onFocusChanged.addListener((windowId) => {
 function pauseBackgroundOperations() {
   // Code to pause or reduce background operations
   COMPUTER_ON = false;
-  last_updated = "";
+  last_updated = "asdfasdf";
 }
 
 function resumeBackgroundOperations() {

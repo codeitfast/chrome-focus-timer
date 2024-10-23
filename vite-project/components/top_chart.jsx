@@ -38,6 +38,7 @@ const TopChart = ({
   //  {date: "DATE", value: "VALUE"}
   // ]
   const [data, setData] = useState([]);
+  const [t, setT] = useState(0);
 
   useEffect(() => {
     let s = storage;
@@ -50,7 +51,7 @@ const TopChart = ({
 
     if (!calendar_view) {
       for (let i = 0; i < 6 - daysSinceLastSunday; i++) {
-        s.splice(0, 0, [{ website: "", time: 10000 }]);
+        s.splice(0, 0, [{ website: "", time: 0 }]);
       }
     }
 
@@ -90,27 +91,37 @@ const TopChart = ({
       data_form.push(base);
     });
 
-    data_form.reverse();
-    /*
-      if (filter.length > 0) {
-        // filter is listof Date,:NAME
-        // this adds the filtered data
-        filter.map((n) => {
-          let proper = shortened_url({ key: n }); //shorten url as much as possible
-          console.error(proper);
-          let item = s.groupedByDate[date].find(
-            (item) => shortened_url({ key: item.key }) === proper
-          );
-          base[proper] = item ? item.value : 0;
-        });
-      }
+    // always should be multiple of 7
 
-      data_form.push(base);
-    });
-    */
+    let latest_value = data_form[data_form.length - 1].date;
+    let index = DAYS.indexOf(latest_value) != -1
+
+    if (index != -1) {
+      let filtered_items = {};
+      // site is string
+      filter.map((site) => {
+        let site_ = date.filter((e) => e.website == site); // returns array
+        if (site_ && site_[0]) {
+          filtered_items[site] = 0;
+        }
+      });
+
+      let days_to_add = 6 - (s.length % 7);
+      for (let i = -1; i <= days_to_add - 1; i++) {
+        data_form.push({ date: DAYS[index - i], "screen time": 0, ...filtered_items });
+      }
+    }
+
+    data_form.reverse();
 
     setData(data_form);
-  }, [storage]);
+  }, [t]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setT(t + 1);
+    }, 1000);
+  }, [t]);
 
   const [value, setValue] = useState(null);
 
@@ -155,8 +166,6 @@ const TopChart = ({
           filtered_items[site] = site_[0].time;
         }
       });
-
-      
 
       let base = {
         hour: (i % 12 == 0 ? 12 : i % 12) + (i > 12 ? "PM" : "AM"),

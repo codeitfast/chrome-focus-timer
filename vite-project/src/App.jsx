@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import TopChart from "../components/top_chart";
 import Day from "../components/day";
-import { shortened_url } from "./lib/shorten_url";
-import { IoCloseOutline } from "react-icons/io5";
 import { organize_data } from "./lib/organize_data";
-import { Fa0, FaCheck, FaTimeline, FaXmark } from "react-icons/fa6";
+import { FaXmark } from "react-icons/fa6";
 
 
 import { GoGraph } from "react-icons/go";
 import { LuTimer } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 
-const icons = [<GoGraph />, <LuTimer />, <IoSettingsOutline />]
+// const icons = [<GoGraph />, <LuTimer />, <IoSettingsOutline />]
 
 import Timer from "../components/timer/Timer";
 
