@@ -100,10 +100,7 @@ const TopChart = ({
       let filtered_items = {};
       // site is string
       filter.map((site) => {
-        let site_ = date.filter((e) => e.website == site); // returns array
-        if (site_ && site_[0]) {
           filtered_items[site] = 0;
-        }
       });
 
       let days_to_add = 6 - (s.length % 7);
