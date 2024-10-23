@@ -17,4 +17,4 @@ npm run build
 After that, upload the file to [link chrome://extensions](chrome://extensions), just as with `timer-v1`:
 ![alt instructions on how to install chrome extensions in developer mode](assets/instructions_install.png "turning on developer mode")
 
-**Important:** the path it builds to is `timer-v2/dist`, so upload `timer-v2/dist` instead.
+**Important:** the path `timer-v2` builds to is `timer-v2/dist`, so upload `timer-v2/dist` instead.
