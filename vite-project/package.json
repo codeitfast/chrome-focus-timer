@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postbuild": "cp src/manifest.json dist/ && cp src/background.js dist/ && cp timer-icon-2.png dist/"
+    "postbuild": "cp src/manifest.json dist/ && cp src/background.js dist/ && cp timer-icon-2.png dist/ && cp src/content.js dist/"
   },
   "dependencies": {
     "@internationalized/date": "^3.5.5",

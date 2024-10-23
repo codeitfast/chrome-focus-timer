@@ -123,8 +123,8 @@ export default function AppStats({
     <div
       className="flex cursor-pointer hover:bg-gray-50 p-4"
       onClick={() => {
-        if (!focused_urls.includes(stats.website)) {
-          set_focused_urls([...focused_urls, stats.website]);
+        if (!focused_urls.includes(shortened_url(stats.website))) {
+          set_focused_urls([...focused_urls, shortened_url(stats.website)]);
         }
       }}
     >

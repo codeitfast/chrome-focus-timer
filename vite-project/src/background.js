@@ -325,7 +325,7 @@ const reset_categories = () => {
   });
 }
 
-reset_categories()
+//reset_categories()
 
 chrome.storage.local.get("categories", (categories) => {
   if(categories == undefined){

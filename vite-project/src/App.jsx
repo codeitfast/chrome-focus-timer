@@ -7,6 +7,15 @@ import { IoCloseOutline } from "react-icons/io5";
 import { organize_data } from "./lib/organize_data";
 import { Fa0, FaCheck, FaTimeline, FaXmark } from "react-icons/fa6";
 
+
+import { GoGraph } from "react-icons/go";
+import { LuTimer } from "react-icons/lu";
+import { IoSettingsOutline } from "react-icons/io5";
+
+const icons = [<GoGraph />, <LuTimer />, <IoSettingsOutline />]
+
+import Timer from "../components/timer/Timer";
+
 function getStorage(items) {
   let groupedByDate = [];
   const transformed_data = organize_data(items, "day");
@@ -45,6 +54,9 @@ function App() {
   const [categories, setCategories] = useState({});
   const [storage, setStorage] = useState([]);
   const [dates, setDates] = useState([]);
+
+  const [focused_page, set_focused_page] = useState(0);
+
   chrome.storage.local.get("site-stats", (items) => {
     setItems(items);
   });
@@ -113,7 +125,7 @@ function App() {
   const [back_weeks, set_back_weeks] = useState(0);
   const [calendar_view, set_calendar_view] = useState(false);
 
-  const now = new Date()
+  const now = new Date();
 
   return (
     <div>
@@ -172,32 +184,53 @@ function App() {
         </div>
       )}
 
-      <TopChart
-        storage={storage}
-        filter={focused_urls}
-        back_weeks={back_weeks}
-        set_back_weeks={set_back_weeks}
-        calendar_view={calendar_view}
-        set_calendar_view={set_calendar_view}
-        items={items}
-      />
-
-      <div className="">
-        {storage &&
-          storage.map((date, i) => (
-            <div>{(calendar_view ||
-              !(i - 7 * back_weeks >= 7 || i - 7 * back_weeks < 0)) &&
-            <Day
-              set_focused_urls={set_focused_urls}
-              focused_urls={focused_urls}
-              categories={categories}
-              storage={storage}
-              date={date}
-              day={i}
-            />
-            }</div>
-          ))}
+{/*
+      <div className="grid grid-cols-3 gap-2 p-2 rounded-full bg-gray-100 w-fit mx-auto">
+      {[0,1,2].map((e, i)=>(
+        <div className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer rounded-full ${focused_page == i ? "bg-gray-200" : null}`} onClick={()=>{set_focused_page(i)}}>
+          {icons[i]}
+        </div>
+      ))}
       </div>
+      */}
+
+      {focused_page == 0 && (
+        <div>
+          <TopChart
+            storage={storage}
+            filter={focused_urls}
+            back_weeks={back_weeks}
+            set_back_weeks={set_back_weeks}
+            calendar_view={calendar_view}
+            set_calendar_view={set_calendar_view}
+            items={items}
+          />
+
+          <div className="">
+            {storage &&
+              storage.map((date, i) => (
+                <div>
+                  {(calendar_view ||
+                    !(i - 7 * back_weeks >= 7 || i - 7 * back_weeks < 0)) && (
+                    <Day
+                      set_focused_urls={set_focused_urls}
+                      focused_urls={focused_urls}
+                      categories={categories}
+                      storage={storage}
+                      date={date}
+                      day={i}
+                    />
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {focused_page == 1 && (
+        <Timer />
+      )}
+
       {closed && (
         <div className="relative">
           <a href="https://forms.gle/rnpTXRFEtQ9Xt7dk7" target="_blank">

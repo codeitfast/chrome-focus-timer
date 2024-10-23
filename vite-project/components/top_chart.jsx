@@ -62,13 +62,30 @@ const TopChart = ({
         move_date_back(today, i - (calendar_view ? 0 : 6 - daysSinceLastSunday))
       );
 
+      let filtered_items = {};
+      // site is string
+      filter.map((site) => {
+        let site_ = date.filter((e) => e.website == site); // returns array
+        if (site_ && site_[0]) {
+          filtered_items[site] = site_[0].time;
+        }
+      });
+
       let base = {
         date: calendar_view
           ? `${this_day.getMonth()}/${this_day.getDate()}`
           : DAYS[this_day.getDay()],
 
         // summation of all screen time
-        "screen time": date.reduce((partialSum, a) => partialSum + a.time, 0),
+        "screen time": date.reduce((partialSum, a) => {
+          // if not in filter, accumulate the time
+          if (filter.indexOf(shortened_url(a.website)) == -1) {
+            return partialSum + a.time;
+          } else {
+            return partialSum;
+          }
+        }, 0),
+        ...filtered_items,
       };
       data_form.push(base);
     });
@@ -121,17 +138,37 @@ const TopChart = ({
     //     {"begin": "STAMP", "end": "STAMP"}
     //   ],
 
-
     // get data
     let display = organize_day(items, day);
 
     // display on map
     let all_data = [];
     display.map((hour, i) => {
+      // hour is of:
+      // [{website: 'abc', time: 'abc'}, ...]
+
+      let filtered_items = {};
+      // site is string
+      filter.map((site) => {
+        let site_ = hour.filter((e) => e.website == site); // returns array
+        if (site_ && site_[0]) {
+          filtered_items[site] = site_[0].time;
+        }
+      });
+
+      
+
       let base = {
-        hour: ((i % 12 == 0)? 12 : i % 12) + (i > 12 ? "PM" : "AM"),
+        hour: (i % 12 == 0 ? 12 : i % 12) + (i > 12 ? "PM" : "AM"),
         // summation of all screen time
-        "screen time": hour.reduce((partialSum, a) => partialSum + a.time, 0),
+        "screen time": hour.reduce((partialSum, a) => {
+          if (filter.indexOf(shortened_url(a.website)) == -1) {
+            return partialSum + a.time;
+          } else {
+            return partialSum;
+          }
+        }, 0),
+        ...filtered_items,
       };
       all_data.push(base);
     });
@@ -189,10 +226,7 @@ const TopChart = ({
           data={data}
           onValueChange={(v) => setValue(v)}
           index="date"
-          categories={[
-            "screen time",
-            ...filter.map((e) => shortened_url(e)),
-          ]}
+          categories={["screen time", ...filter.map((e) => e)]}
           valueFormatter={(tick) =>
             `${ticks_to_hours_rounded(tick)}h ${ticks_to_minutes_rounded(
               tick
@@ -201,14 +235,12 @@ const TopChart = ({
         />
       ) : (
         <BarChart
+          type="stacked"
           className="h-48"
           data={data}
           index="date"
           onValueChange={(v) => setValue(v)}
-          categories={[
-            "screen time",
-            ...filter.map((e) => shortened_url(e)),
-          ]}
+          categories={["screen time", ...filter.map((e) => e)]}
           valueFormatter={(tick) =>
             `${ticks_to_hours_rounded(tick)}h ${ticks_to_minutes_rounded(
               tick
@@ -217,7 +249,6 @@ const TopChart = ({
         />
       )}
 
-      
       <div className="p-4 pb-0 grid grid-cols-3 gap-2 w-fit ml-auto mr-0">
         <div
           className="p-2 hover:bg-gray-200 rounded-full w-fit h-fit"
@@ -249,18 +280,20 @@ const TopChart = ({
         </div>
       </div>
 
-      {lower_data && value &&
-      <BarChart
-        className="h-48"
-        data={lower_data}
-        index="hour"
-        categories={[
-          "screen time"
-        ]}
-        valueFormatter={(tick) =>
-          `${ticks_to_hours_rounded(tick)}h ${ticks_to_minutes_rounded(tick)}m`
-        }
-      />}
+      {lower_data && value && (
+        <BarChart
+          type="stacked"
+          className="h-48"
+          data={lower_data}
+          index="hour"
+          categories={["screen time", ...filter.map((e) => e)]}
+          valueFormatter={(tick) =>
+            `${ticks_to_hours_rounded(tick)}h ${ticks_to_minutes_rounded(
+              tick
+            )}m`
+          }
+        />
+      )}
 
       {/*
       <pre className="mt-8 rounded-md bg-gray-950 p-3 text-sm text-white dark:bg-gray-800">
