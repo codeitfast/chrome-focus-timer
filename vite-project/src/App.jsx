@@ -5,7 +5,6 @@ import Day from "../components/day";
 import { organize_data } from "./lib/organize_data";
 import { FaXmark } from "react-icons/fa6";
 
-
 import { GoGraph } from "react-icons/go";
 import { LuTimer } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -56,7 +55,11 @@ function App() {
   const [focused_page, set_focused_page] = useState(0);
 
   chrome.storage.local.get("site-stats", (items) => {
-    setItems(items);
+    if (items == undefined) {
+      chrome.storage.local.set({ "site-stats": {} });
+    } else {
+      setItems(items);
+    }
   });
   chrome.storage.local.get("categories", (categories) => {
     setCategories(categories.categories);
@@ -182,7 +185,7 @@ function App() {
         </div>
       )}
 
-{/*
+      {/*
       <div className="grid grid-cols-3 gap-2 p-2 rounded-full bg-gray-100 w-fit mx-auto">
       {[0,1,2].map((e, i)=>(
         <div className={`p-2 bg-gray-100 hover:bg-gray-300 cursor-pointer rounded-full ${focused_page == i ? "bg-gray-200" : null}`} onClick={()=>{set_focused_page(i)}}>
@@ -225,9 +228,7 @@ function App() {
         </div>
       )}
 
-      {focused_page == 1 && (
-        <Timer />
-      )}
+      {focused_page == 1 && <Timer />}
 
       {closed && (
         <div className="relative">

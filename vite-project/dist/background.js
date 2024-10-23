@@ -325,10 +325,10 @@ const reset_categories = () => {
   });
 };
 
-reset_categories();
+// reset_categories();
 
 chrome.storage.local.get("categories", (categories) => {
-  if (categories == undefined) {
+  if (categories == undefined || Object.keys(categories).length == 0) {
     reset_categories();
   }
 });
