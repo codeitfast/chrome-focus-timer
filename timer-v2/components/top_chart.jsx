@@ -91,11 +91,12 @@ const TopChart = ({
       data_form.push(base);
     });
 
-    // always should be multiple of 7
 
-    let latest_value = data_form[data_form.length - 1].date;
-    let index = DAYS.indexOf(latest_value) != -1
 
+    const latest_value = data_form[data_form.length - 1].date;
+    let index = DAYS.indexOf(latest_value)
+
+    // only run if in weekly calendar
     if (index != -1) {
       let filtered_items = {};
       // site is string
@@ -103,9 +104,9 @@ const TopChart = ({
           filtered_items[site] = 0;
       });
 
-      let days_to_add = 6 - (s.length % 7);
-      for (let i = -1; i <= days_to_add - 1; i++) {
-        data_form.push({ date: DAYS[index - i], "screen time": 0, ...filtered_items });
+      while(index > 0){
+        index -= 1
+        data_form.push({ date: DAYS[index], "screen time": 0, ...filtered_items });
       }
     }
 
@@ -115,9 +116,10 @@ const TopChart = ({
   }, [t]);
 
   useEffect(() => {
+    if(t < 1) setT(1)
     setTimeout(() => {
       setT(t + 1);
-    }, 1000);
+    }, 100);
   }, [t]);
 
   const [value, setValue] = useState(null);
