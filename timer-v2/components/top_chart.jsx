@@ -66,7 +66,7 @@ const TopChart = ({
       let filtered_items = {};
       // site is string
       filter.map((site) => {
-        let site_ = date.filter((e) => e.website == site); // returns array
+        let site_ = date.filter((e) => shortened_url(e.website) == site); // returns array
         if (site_ && site_[0]) {
           filtered_items[site] = site_[0].time;
         }
@@ -160,7 +160,7 @@ const TopChart = ({
       let filtered_items = {};
       // site is string
       filter.map((site) => {
-        let site_ = hour.filter((e) => e.website == site); // returns array
+        let site_ = hour.filter((e) => shortened_url(e.website) == site); // returns array
         if (site_ && site_[0]) {
           filtered_items[site] = site_[0].time;
         }
