@@ -1,0 +1,1 @@
+This is a test idea for redirecting people to another site if they go to a blacklisted site. However, it is not fully implemented yet.

@@ -1,0 +1,12 @@
+{
+    "manifest_version": 3,
+    "name": "Site Redirector",
+    "version": "1.0",
+    "description": "Redirects specified websites to a destination site",
+    "permissions": [
+      "webNavigation"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    }
+  }
